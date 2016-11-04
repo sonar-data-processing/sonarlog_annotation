@@ -3,7 +3,6 @@ project (sonarlog_annotation)
 
 include ( "${WORKSPACE_DIR}/base/cmake/Dependencies.cmake"  )
 include ( FindPkgConfig  )
-include ( BoostTest )
 
 add_project_dependency (base              ${WORKSPACE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 add_project_dependency (rock_util         ${WORKSPACE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
