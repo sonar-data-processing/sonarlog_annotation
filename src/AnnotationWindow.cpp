@@ -20,8 +20,8 @@ AnnotationWindow::AnnotationWindow(QWidget *parent)
 void AnnotationWindow::setupImagePickerTool() {
     image_picker_tool_ = new image_picker_tool::ImagePickerTool();
     image_picker_tool_->installEventFilter(this);
-    connect(image_picker_tool_, SIGNAL(pathAppended(image_picker_tool::PathElement&)), this, SLOT(pathAppended(image_picker_tool::PathElement&)));
-    connect(image_picker_tool_, SIGNAL(pointChanged(image_picker_tool::PathElement&)), this, SLOT(pointChanged(image_picker_tool::PathElement&)));
+    connect(image_picker_tool_, SIGNAL(pathAppended(QList<QPointF>&, QVariant&)), this, SLOT(pathAppended(QList<QPointF>&, QVariant&)));
+    connect(image_picker_tool_, SIGNAL(pointChanged(const QList<QPointF>&, const QVariant&)), this, SLOT(pointChanged(const QList<QPointF>&, const QVariant&)));
     setCentralWidget(image_picker_tool_);
 }
 
@@ -201,7 +201,7 @@ void AnnotationWindow::nextSample() {
     }
 }
 
-void AnnotationWindow::pathAppended(image_picker_tool::PathElement& elements) {
+void AnnotationWindow::pathAppended(QList<QPointF>& path, QVariant& user_data) {
     QInputDialog *input_dialog = new QInputDialog(this);
 
     if (current_index_ != -1) {
@@ -216,18 +216,18 @@ void AnnotationWindow::pathAppended(image_picker_tool::PathElement& elements) {
             return;
         }
 
-        elements.userData = annotation_name;
-        saveAnnotation(annotation_name, elements.path);
+        user_data = annotation_name;
+        saveAnnotation(annotation_name, path);
     }
 }
 
-void AnnotationWindow::pointChanged(image_picker_tool::PathElement& path_element) {
-    QString annotation_name = path_element.userData.toString();
+void AnnotationWindow::pointChanged(const QList<QPointF>& path, const QVariant& user_data) {
+    QString annotation_name = user_data.toString();
     qDebug() << "Annotation name: " << annotation_name;
     AnnotationMap* map = annotations_[current_index_];
     AnnotationMap::iterator it = map->find(annotation_name);
     if (it != map->end()) {
-        map->insert(annotation_name, path_element.path);
+        map->insert(annotation_name, path);
     }
 }
 
@@ -272,14 +272,19 @@ void AnnotationWindow::loadAnnotations(int index) {
     image_picker_tool_->clearPaths();
     if (!annotations_[current_index_]->isEmpty()) {
         AnnotationMap::iterator it;
-        QList<image_picker_tool::PathElement> paths;
+        QList<QVariant> user_data_list;
+        QList<QList<QPointF> > path_list;
+
         for (it = annotations_[current_index_]->begin();
               it != annotations_[current_index_]->end();
               it++) {
-
-            paths << image_picker_tool::PathElement(it.value(), it.key());
+            user_data_list << it.key();
+            path_list << it.value();
         }
-        image_picker_tool_->appendPaths(paths);
+        
+        
+    
+        image_picker_tool_->appendPaths(path_list, user_data_list);
     }
 }
 

@@ -20,8 +20,8 @@ protected:
 
 protected slots:
     void currentItemChanged(QTreeWidgetItem * current, QTreeWidgetItem * previous);
-    void pathAppended(image_picker_tool::PathElement& path_element);
-    void pointChanged(image_picker_tool::PathElement& path_element);
+    void pathAppended(QList<QPointF>& path, QVariant& user_data);
+    void pointChanged(const QList<QPointF>& path, const QVariant& user_data);
 
 private:
 
