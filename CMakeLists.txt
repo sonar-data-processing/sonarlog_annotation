@@ -63,16 +63,32 @@ link_directories (
     ${ROCK_ROBOTICS_LIBRARY_DIR}
 )
 
-file ( GLOB SRCS RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/src/*.cpp )
-set ( SRCS ${SRCS} ${sonar_processing_SOURCES} )
+
+add_library (
+    annotation_filereader STATIC
+    src/AnnotationFileReader.cpp
+)
+
+target_link_libraries (
+    annotation_filereader
+    ${OpenCV_LIBS}
+)
 
 add_executable (
     sonarlog_annotation
-    ${SRCS}
+    src/main.cpp
+    src/AnnotationWindow.cpp
     ${sonarlog_annotation_MOC_CPP}
+    ${sonar_processing_SOURCES}
 )
 
 target_link_libraries (
     sonarlog_annotation
     ${LIBS}
+    annotation_filereader
+)
+
+install(
+    TARGETS sonarlog_annotation sonarlog_annotation
+    DESTINATION ${CMAKE_SOURCE_DIR}/bin
 )
