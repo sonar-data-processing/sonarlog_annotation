@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "sonar_processing/ImageUtils.hpp"
+#include "sonar_processing/ImageUtil.hpp"
 #include "sonarlog_annotation/AnnotationFileReader.hpp"
 
 namespace sonarlog_annotation {
@@ -28,7 +28,7 @@ void AnnotationFileReader::readAnnotation(cv::FileNode node, AnnotationFileReade
 
     while (it != node.end()) {
         (*it) >> mat;
-        std::vector<cv::Point2f> points = sonar_processing::image_utils::mat2vector<cv::Point2f>(mat);
+        std::vector<cv::Point2f> points = sonar_processing::image_util::mat2vector<cv::Point2f>(mat);
         annotations.insert(std::make_pair((*it).name(), points));
         it++;
     }
