@@ -1,0 +1,12 @@
+<package>
+    <description brief="convert sonar-log to video">
+        This software convert the sonar-log to video
+    </description>
+    <author>Gustavo Neves/gustavo.neves12@gmail.com</author>
+    <depend package="tools/pocolog_cpp" />
+    <depend package="sonar_toolkit/base" />
+    <depend package="sonar_toolkit/rock_util" />
+    <depend package="sonar_toolkit/sonar_util" />
+    <depend package="sonar_toolkit/sonar_processing" />
+    <depend package="sonar_toolkit/image_picker_tool" />
+</package>

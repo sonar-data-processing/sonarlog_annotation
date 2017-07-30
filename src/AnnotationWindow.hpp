@@ -1,11 +1,11 @@
-#ifndef AnnotationWindow_hpp
-#define AnnotationWindow_hpp
+#ifndef sonarlog_annotation_AnnotationWindow_hpp
+#define sonarlog_annotation_AnnotationWindow_hpp
 
 #include <iostream>
 #include <QtGui>
 #include <base/samples/Sonar.hpp>
-#include "sonar_processing/SonarHolder.hpp"
-#include "image_picker_tool/ImagePickerTool.hpp"
+#include <sonar_processing/SonarHolder.hpp>
+#include <image_picker_tool/ImagePickerTool.hpp>
 
 #define APP_NAME "Sonarlog Annotation Tool"
 

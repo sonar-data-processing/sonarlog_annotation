@@ -1,7 +1,7 @@
 #include <opencv2/opencv.hpp>
+#include <rock_util/LogReader.hpp>
+#include <rock_util/Utilities.hpp>
 #include "AnnotationFileReader.hpp"
-#include "rock_util/LogReader.hpp"
-#include "rock_util/Utilities.hpp"
 #include "AnnotationWindow.hpp"
 
 #define DATA_PATH "/home/gustavoneves/masters_degree/dev/sonar_toolkit/data"

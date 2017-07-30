@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "sonar_processing/ImageUtil.hpp"
-#include "sonarlog_annotation/AnnotationFileReader.hpp"
+#include <sonar_processing/ImageUtil.hpp>
+#include "AnnotationFileReader.hpp"
 
 namespace sonarlog_annotation {
 
