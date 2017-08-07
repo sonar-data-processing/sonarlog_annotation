@@ -35,7 +35,7 @@ link_directories (
 )
 
 add_library (
-    annotation_filereader STATIC
+    annotation_filereader SHARED
     src/AnnotationFileReader.cpp
 )
 
@@ -69,7 +69,7 @@ install(
 
 install(
     TARGETS annotation_filereader
-    DESTINATION sonar_toolkit/lib
+    DESTINATION lib/sonar_toolkit
 )
 
 install(
