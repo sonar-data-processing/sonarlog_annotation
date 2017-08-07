@@ -4,8 +4,6 @@
 #include "AnnotationFileReader.hpp"
 #include "AnnotationWindow.hpp"
 
-#define DATA_PATH "/home/gustavoneves/masters_degree/dev/sonar_toolkit/data"
-
 namespace sonarlog_annotation {
 
 void LoadSonarLogWorker::performLoadSonarLog() {
