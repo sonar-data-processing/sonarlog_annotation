@@ -5,6 +5,7 @@
 #include <QtGui>
 #include <base/samples/Sonar.hpp>
 #include <sonar_processing/SonarHolder.hpp>
+#include <sonar_processing/ImageFiltering.hpp>
 #include <image_picker_tool/ImagePickerTool.hpp>
 
 #define APP_NAME "Sonarlog Annotation Tool"
@@ -57,8 +58,9 @@ protected slots:
     void pointChanged(const QList<QPointF>& path, const QVariant& user_data, QBool& ignore);
     void pointAppened(const QPointF& point, QBool& ignore);
     void openLogFileClicked(bool checked);
+    void enableEnhancementStateChanged(int state);
     void loadLogFileFinished();
-    
+
 signals:
     void performLoadSonarLogFile();
 
@@ -72,7 +74,7 @@ private:
     void setupTreeView();
 
     void loadSamples(const QString& logfilepath, QList<base::samples::Sonar>& samples);
-    void loadSonarImage(int sample_number);
+    void loadSonarImage(int sample_number, bool redraw = false);
     void loadTreeItems(const QList<base::samples::Sonar>& samples);
     void loadAnnotationTreeItems(const QList<AnnotationMap>& annotations);
     void loadAnnotations(int index);
@@ -93,18 +95,19 @@ private:
 
     void releaseAnnotations();
     void releaseTreeItems();
-    
+
     void readAnnotationFile();
     void writeAnnotationFile();
-    
+
     QString generateAnnotationFilePath(const QString& logfilepath);
-    
+
     std::vector<cv::Point2f> toCvPoints(const QList<QPointF>& points);
     QList<QPointF> toQtPoints(const std::vector<cv::Point2f>& points);
-    
+
 
     QTreeWidgetItem* createAnnotationItem(const QString& name, const QList<QPointF>& points);
     QPushButton *open_logfile_button_;
+    QCheckBox *enable_enhancement_button_;
     QTreeWidget *treewidget_;
     image_picker_tool::ImagePickerTool* image_picker_tool_;
 
@@ -124,7 +127,7 @@ private:
 
     QThread thread_;
     LoadSonarLogWorker load_sonarlog_worker_;
-    
+
     QString annotation_filepath_;
     QString last_annotation_name_;
 };

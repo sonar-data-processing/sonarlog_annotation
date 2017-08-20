@@ -45,14 +45,14 @@ target_link_libraries (
 )
 
 add_executable (
-    sonarlog_annotation
+    sonarlog-annotation
     src/main.cpp
     src/AnnotationWindow.cpp
     ${sonarlog_annotation_MOC_CPP}
 )
 
 target_link_libraries (
-    sonarlog_annotation
+    sonarlog-annotation
     annotation_filereader
     sonar_processing
     rock_util
@@ -73,6 +73,6 @@ install(
 )
 
 install(
-    TARGETS sonarlog_annotation
+    TARGETS sonarlog-annotation
     DESTINATION bin
 )

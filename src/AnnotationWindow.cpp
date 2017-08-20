@@ -18,6 +18,7 @@ AnnotationWindow::AnnotationWindow(QWidget *parent)
     , load_sonarlog_worker_(this)
     , load_sonarlog_progress_(NULL)
     , last_annotation_name_("")
+    , enable_enhancement_button_(NULL)
 {
     setupLoadSonarLogWorker();
     setupTreeView();
@@ -44,19 +45,27 @@ void AnnotationWindow::setupImagePickerTool() {
 
 void AnnotationWindow::setupRightDockWidget() {
     QDockWidget *dock = new QDockWidget(this);
+
+    dock->setFeatures(QDockWidget::NoDockWidgetFeatures);
     dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
 
     QVBoxLayout *layout = new QVBoxLayout();
     open_logfile_button_ = new QPushButton("Open Sonar Log");
+    enable_enhancement_button_ = new QCheckBox("enhancement");
 
     QFrame *frame = new QFrame();
     layout->addWidget(open_logfile_button_);
+    layout->addWidget(enable_enhancement_button_);
     layout->addWidget(treewidget_);
 
     frame->setLayout(layout);
     dock->setWidget(frame);
 
+    open_logfile_button_->setFocus();
+
     connect(open_logfile_button_, SIGNAL(clicked(bool)), this, SLOT(openLogFileClicked(bool)));
+    connect(enable_enhancement_button_, SIGNAL(stateChanged(int)), this, SLOT(enableEnhancementStateChanged(int)));
 
     setTabOrder(treewidget_, open_logfile_button_);
     addDockWidget(Qt::LeftDockWidgetArea, dock);
@@ -84,10 +93,10 @@ void AnnotationWindow::loadSamples(const QString& logfilepath, QList<base::sampl
     } while(stream.current_sample_index() < stream.total_samples());
 }
 
-void AnnotationWindow::loadSonarImage(int sample_number) {
+void AnnotationWindow::loadSonarImage(int sample_number, bool redraw) {
     if (samples_.count() > 0 &&
         sample_number < samples_.count() &&
-        sample_number != current_index_) {
+        (sample_number != current_index_ || redraw)) {
 
         base::samples::Sonar sample = samples_.value(sample_number);
         sonar_holder_.Reset(sample.bins,
@@ -97,9 +106,20 @@ void AnnotationWindow::loadSonarImage(int sample_number) {
                             sample.beam_count);
 
         cv::Mat cart_image = sonar_holder_.cart_image();
+
+        if (enable_enhancement_button_->checkState() == Qt::Checked) {
+            qDebug() << "Enhancement";
+            cv::Mat enhanced;
+            sonar_processing::image_filtering::insonification_correction(cart_image,
+                                                                         sonar_holder_.cart_image_mask(),
+                                                                         enhanced);
+            cart_image = enhanced.clone();
+        }
+
         cart_image.convertTo(cart_image, CV_8U, 255.0);
         cv::cvtColor(cart_image, cart_image, CV_GRAY2BGR);
         image_picker_tool_->loadImage(cart_image);
+
         current_index_ = sample_number;
     }
 }
@@ -491,6 +511,11 @@ void AnnotationWindow::openLogFileClicked(bool checked) {
 
         load_sonarlog_worker_.requestLoadSonarLog();
     }
+}
+
+void AnnotationWindow::enableEnhancementStateChanged(int state) {
+    std::cout << "load sonra image" << std::endl;
+    loadSonarImage(current_index_, true);
 }
 
 void AnnotationWindow::loadSonarLog() {
