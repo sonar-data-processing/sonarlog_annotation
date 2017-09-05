@@ -1,6 +1,8 @@
 #include <opencv2/opencv.hpp>
 #include <rock_util/LogReader.hpp>
 #include <rock_util/Utilities.hpp>
+#include <sonar_processing/ImageFiltering.hpp>
+#include <sonar_processing/SonarImagePreprocessing.hpp>
 #include "AnnotationFileReader.hpp"
 #include "AnnotationWindow.hpp"
 
@@ -19,6 +21,7 @@ AnnotationWindow::AnnotationWindow(QWidget *parent)
     , load_sonarlog_progress_(NULL)
     , last_annotation_name_("")
     , enable_enhancement_button_(NULL)
+    , enable_preprocessing_button_(NULL)
 {
     setupLoadSonarLogWorker();
     setupTreeView();
@@ -53,10 +56,12 @@ void AnnotationWindow::setupRightDockWidget() {
     QVBoxLayout *layout = new QVBoxLayout();
     open_logfile_button_ = new QPushButton("Open Sonar Log");
     enable_enhancement_button_ = new QCheckBox("enhancement");
+    enable_preprocessing_button_ = new QCheckBox("preprocessing");
 
     QFrame *frame = new QFrame();
     layout->addWidget(open_logfile_button_);
     layout->addWidget(enable_enhancement_button_);
+    layout->addWidget(enable_preprocessing_button_);
     layout->addWidget(treewidget_);
 
     frame->setLayout(layout);
@@ -66,6 +71,7 @@ void AnnotationWindow::setupRightDockWidget() {
 
     connect(open_logfile_button_, SIGNAL(clicked(bool)), this, SLOT(openLogFileClicked(bool)));
     connect(enable_enhancement_button_, SIGNAL(stateChanged(int)), this, SLOT(enableEnhancementStateChanged(int)));
+    connect(enable_preprocessing_button_, SIGNAL(stateChanged(int)), this, SLOT(enablePreprocessingStateChanged(int)));
 
     setTabOrder(treewidget_, open_logfile_button_);
     addDockWidget(Qt::LeftDockWidgetArea, dock);
@@ -105,15 +111,19 @@ void AnnotationWindow::loadSonarImage(int sample_number, bool redraw) {
                             sample.bin_count,
                             sample.beam_count);
 
-        cv::Mat cart_image = sonar_holder_.cart_image();
-
-        if (enable_enhancement_button_->checkState() == Qt::Checked) {
-            qDebug() << "Enhancement";
-            cv::Mat enhanced;
-            sonar_processing::image_filtering::insonification_correction(cart_image,
+        cv::Mat cart_image;
+        if (enable_preprocessing_button_->checkState() == Qt::Checked) {
+            cv::Mat preprocessed_mask;
+            sonar_processing::SonarImagePreprocessing sonar_image_preprocessing;
+            sonar_image_preprocessing.Apply(sonar_holder_.cart_image(), sonar_holder_.cart_image_mask(), cart_image, preprocessed_mask, 0.5);
+        }
+        else if (enable_enhancement_button_->checkState() == Qt::Checked) {
+            sonar_processing::image_filtering::insonification_correction(sonar_holder_.cart_image(),
                                                                          sonar_holder_.cart_image_mask(),
-                                                                         enhanced);
-            cart_image = enhanced.clone();
+                                                                         cart_image);
+        }
+        else {
+            sonar_holder_.cart_image().copyTo(cart_image);
         }
 
         cart_image.convertTo(cart_image, CV_8U, 255.0);
@@ -514,7 +524,10 @@ void AnnotationWindow::openLogFileClicked(bool checked) {
 }
 
 void AnnotationWindow::enableEnhancementStateChanged(int state) {
-    std::cout << "load sonra image" << std::endl;
+    loadSonarImage(current_index_, true);
+}
+
+void AnnotationWindow::enablePreprocessingStateChanged(int state) {
     loadSonarImage(current_index_, true);
 }
 

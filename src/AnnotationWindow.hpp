@@ -5,7 +5,6 @@
 #include <QtGui>
 #include <base/samples/Sonar.hpp>
 #include <sonar_processing/SonarHolder.hpp>
-#include <sonar_processing/ImageFiltering.hpp>
 #include <image_picker_tool/ImagePickerTool.hpp>
 
 #define APP_NAME "Sonarlog Annotation Tool"
@@ -59,6 +58,7 @@ protected slots:
     void pointAppened(const QPointF& point, QBool& ignore);
     void openLogFileClicked(bool checked);
     void enableEnhancementStateChanged(int state);
+    void enablePreprocessingStateChanged(int state);
     void loadLogFileFinished();
 
 signals:
@@ -108,6 +108,7 @@ private:
     QTreeWidgetItem* createAnnotationItem(const QString& name, const QList<QPointF>& points);
     QPushButton *open_logfile_button_;
     QCheckBox *enable_enhancement_button_;
+    QCheckBox *enable_preprocessing_button_;
     QTreeWidget *treewidget_;
     image_picker_tool::ImagePickerTool* image_picker_tool_;
 
