@@ -1,6 +1,6 @@
 <package>
-    <description brief="convert sonar-log to video">
-        This software convert the sonar-log to video
+    <description brief="Tool for Sonar log annotation">
+        This software is for sonar log annotation
     </description>
     <author>Gustavo Neves/gustavo.neves12@gmail.com</author>
     <depend package="tools/pocolog_cpp" />
