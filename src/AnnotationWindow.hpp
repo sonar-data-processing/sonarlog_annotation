@@ -48,6 +48,10 @@ public:
     explicit AnnotationWindow(QWidget *parent = 0);
     void loadSonarLog();
 
+    void setStreamName(const QString& s) {
+        stream_name_ = s;
+    }
+
 protected:
     bool eventFilter(QObject* obj, QEvent* event);
 
@@ -131,6 +135,7 @@ private:
 
     QString annotation_filepath_;
     QString last_annotation_name_;
+    QString stream_name_;
 };
 
 } /* namespace sonarlog_annotation */

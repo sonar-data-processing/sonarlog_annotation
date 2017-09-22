@@ -89,7 +89,7 @@ void AnnotationWindow::setupTreeView() {
 void AnnotationWindow::loadSamples(const QString& logfilepath, QList<base::samples::Sonar>& samples) {
 
     rock_util::LogReader reader(logfilepath.toStdString());
-    rock_util::LogStream stream = reader.stream("gemini.sonar_samples");
+    rock_util::LogStream stream = reader.stream(stream_name_.toStdString());
 
     do {
         base::samples::Sonar sample;
