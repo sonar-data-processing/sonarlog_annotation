@@ -241,6 +241,30 @@ bool AnnotationWindow::processImagePickerToolKeyPress(QKeyEvent* event) {
     return false;
 }
 
+void AnnotationWindow::copyPreviousAnnotation() {
+    if (current_index_ > 0) {
+
+        if (!annotations_[current_index_-1].empty() &&
+            annotations_[current_index_].empty()) {
+
+            QList<QVariant> user_data_list;
+            QList<QList<QPointF> > path_list;
+
+            AnnotationMap::iterator it;
+            for (it = annotations_[current_index_-1].begin();
+                  it != annotations_[current_index_-1].end();
+                  it++) {
+                user_data_list << it.key();
+                path_list << it.value();
+                for (size_t i = 0; i < path_list.size(); i++) {
+                    saveAnnotation(user_data_list[i].toString(), path_list[i]);
+                }
+            }
+            loadAnnotations(current_index_);
+        }
+    }
+}
+
 bool AnnotationWindow::processImagePickerToolKeyRelease(QKeyEvent* event) {
 
     switch(event->key()){
@@ -256,6 +280,10 @@ bool AnnotationWindow::processImagePickerToolKeyRelease(QKeyEvent* event) {
             image_picker_tool_->removeLastPoint();
             return true;
         }
+        case Qt::Key_F5: {
+            copyPreviousAnnotation();
+            return true;
+        }
     }
 
     return false;
@@ -263,6 +291,10 @@ bool AnnotationWindow::processImagePickerToolKeyRelease(QKeyEvent* event) {
 
 bool AnnotationWindow::processTreeWidgetKeyRelease(QKeyEvent* event) {
     switch(event->key()){
+        case Qt::Key_F5: {
+            copyPreviousAnnotation();
+            return true;
+        }
         case Qt::Key_Delete: {
             if (!current_annotation_name_.isEmpty()) {
 

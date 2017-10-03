@@ -97,6 +97,8 @@ private:
     void updateAnnotation(QString annotation_name, const QList<QPointF>& points);
     void addAnnotationTreeItem(int index, const QString& annotation_name, const QList<QPointF>& points);
 
+    void copyPreviousAnnotation();
+
     void releaseAnnotations();
     void releaseTreeItems();
 
